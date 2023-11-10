@@ -1,38 +1,47 @@
-let inputbox= document.getElementById("input-box")
-let listcontainer= document.getElementById("listcontainer")
-// let addbtn= document.getElementById("add-btn")
-// let liel = document.querySelector(".checked")
-// let inval=["ASD"]
-// let liEl=[]
-// const leElinternalstorage = JSON.parse(localStorage.getItem("liEL"));
 
-function addItem(inputbox){
-    let listitem= document.createElement("li")
-    listitem.innerHTML= `${inputbox}<i></i>`
+let inputbox = document.getElementById("input-box");
+let listcontainer = document.getElementById("listcontainer");
 
-    listitem.addEventListener("click", function(){
-        this.classList.toggle('done')
-    })
+window.onload = function () {
+    let storedData = localStorage.getItem("data");
 
-    listitem.querySelector("i").addEventListener("click",function(){
-
-        listitem.remove()
-    })
-    listcontainer.appendChild(listitem)
-
+    if (storedData) {
+        let tasks = JSON.parse(storedData);
+        tasks.forEach(task => addItem(task));
+    }
 }
 
-inputbox.addEventListener("keyup",function(event){
+function addItem(text) {
+    let listitem = document.createElement("li");
+    listitem.innerHTML = `${text}<i></i>`;
 
-        if(event.key=="Enter"){
-            if(inputbox.value==""){
-                alert("Please write any task")
-            }
-            else{
-                addItem(this.value)
-                this.value=""
-            }
-            
+    listitem.addEventListener("click", function () {
+        this.classList.toggle('done');
+        savedata();
+    });
+
+    listitem.querySelector("i").addEventListener("click", function () {
+        listitem.remove();
+        savedata();
+    });
+
+    listcontainer.appendChild(listitem);
+    savedata();
+}
+
+inputbox.addEventListener("keyup", function (event) {
+    if (event.key == "Enter") {
+        if (inputbox.value == "") {
+            alert("Please write any task");
+        } else {
+            addItem(this.value);
+            this.value = "";
         }
-})
+    }
+});
+
+function savedata() {
+    let tasks = Array.from(document.querySelectorAll("#listcontainer li")).map(item => item.textContent);
+    localStorage.setItem("data", JSON.stringify(tasks));
+}
 
